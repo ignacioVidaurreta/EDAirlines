@@ -73,8 +73,7 @@ public class Airport {
     }
 
     // Los pesos deben ser positivos
-    public LinkedList<Flight> minDistance(Airport from, Airport to, String fmt, String departureDays){
-        //clearMarks();
+    public LinkedList<Flight> minDistance(FlightAssistant map, Airport from, Airport to, String fmt, String departureDays){
         Airport f = from;
         Airport t = to;
         if( f == null || t == null)
@@ -130,6 +129,8 @@ public class Airport {
                     }
                 }
             }
+            for (Airport airport:map.getAirportList())
+                airport.setVisited(false);
         }
         if(bestRoute != null) {
             return bestRoute;

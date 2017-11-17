@@ -4,5 +4,6 @@ insert airport MVD -34.838401794433594 -56.030799865722656
 insert airport LIM -12.0219 -77.114304
 insert flight AA 1432 Lu-Ju-Ma-Sa AEP MIA 08:45 08h45m 850.00
 insert flight LAN 1337 Ma-Ju-Vi MIA LIM 18:05 07h23m 400.00
-findRoute MIA LIM pr Ma
 findRoute AEP MIA ft Ju
+findRoute MIA LIM pr Ma
+findRoute AEP LIM ft Lu

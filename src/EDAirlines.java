@@ -107,7 +107,7 @@ public class EDAirlines {
                 System.out.println("Not enough arguments.");
                 return;
             }
-            LinkedList<Flight> route = map.getAirportMap().get(args[0]).minDistance(map.getAirportMap().get(args[0]),
+            LinkedList<Flight> route = map.getAirportMap().get(args[0]).minDistance(map, map.getAirportMap().get(args[0]),
                                                                                     map.getAirportMap().get(args[1]),
                                                                                     args[2], args[3]);
             if (route == null){
