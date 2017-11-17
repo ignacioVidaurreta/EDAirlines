@@ -50,8 +50,9 @@ public class Airport {
             this.a = a;
             this.d = d;
             this.route = new LinkedList<>();
-            for(Flight aux : route)
-                this.route.add(aux);
+            if (route != null)
+                for(Flight aux : route)
+                    this.route.add(aux);
             this.route.add(f);
         }
 
@@ -60,8 +61,9 @@ public class Airport {
             this.d = d;
             this.dptDay = dptDay;
             this.route = new LinkedList<>();
-            for(Flight aux : route)
-                this.route.add(aux);
+            if (route != null)
+                for(Flight aux : route)
+                    this.route.add(aux);
             this.route.add(f);
         }
 
@@ -72,10 +74,10 @@ public class Airport {
 
     // Los pesos deben ser positivos
     public LinkedList<Flight> minDistance(Airport from, Airport to, String fmt, String departureDays){
-        // clearMarks();
+        //clearMarks();
         Airport f = from;
         Airport t = to;
-        if( f == null || t == null || t.neighbors.size() == 0)
+        if( f == null || t == null)
             return null;
         String [] s = departureDays.split("-");
         LinkedList<Flight> bestRoute = null;
@@ -130,7 +132,6 @@ public class Airport {
             }
         }
         if(bestRoute != null) {
-            printRoute(bestRoute);
             return bestRoute;
         }
         return null;

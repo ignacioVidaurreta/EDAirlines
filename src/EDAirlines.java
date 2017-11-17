@@ -107,7 +107,6 @@ public class EDAirlines {
                 System.out.println("Not enough arguments.");
                 return;
             }
-            System.out.println("[DEBUG] Parameters: " + args[0] + " - " + args[1] + " - " + args[2] + " - " + args[3]);
             LinkedList<Flight> route = map.getAirportMap().get(args[0]).minDistance(map.getAirportMap().get(args[0]),
                                                                                     map.getAirportMap().get(args[1]),
                                                                                     args[2], args[3]);
@@ -117,13 +116,13 @@ public class EDAirlines {
             }
             if (map.getOutputType().equals("stdout")){
                 System.out.println("PRICE");
-                System.out.print("FLIGHTTIME");
-                System.out.print("TOTALTIME");
+                System.out.println("FLIGHTTIME");
+                System.out.println("TOTALTIME");
                 for (Flight flight:route){
                     System.out.print(flight.getFrom().getName() + "#");
                     System.out.print(flight.getAirline() + "#");
                     System.out.print(flight.getFlightNum() + "#");
-                    System.out.print(flight.getWeekDays().get(0) + "#");
+                    System.out.print(flight.getWeekDays()+ "#");
                     System.out.print(flight.getTo().getName() + "\n");
                 }
             } else{
