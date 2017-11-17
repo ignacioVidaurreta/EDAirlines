@@ -107,29 +107,32 @@ public class EDAirlines {
                 System.out.println("Not enough arguments.");
                 return;
             }
-            LinkedList<Flight> route = map.getAirportMap().get(args[0]).minDistance(map, map.getAirportMap().get(args[0]),
-                                                                                    map.getAirportMap().get(args[1]),
-                                                                                    args[2], args[3]);
-            if (route == null){
-                System.out.println("No route found!");
-                return;
-            }
-            if (map.getOutputType().equals("stdout")){
-                System.out.println("PRICE");
-                System.out.println("FLIGHTTIME");
-                System.out.println("TOTALTIME");
-                for (Flight flight:route){
-                    System.out.print(flight.getFrom().getName() + "#");
-                    System.out.print(flight.getAirline() + "#");
-                    System.out.print(flight.getFlightNum() + "#");
-                    System.out.print(flight.getWeekDays()+ "#");
-                    System.out.print(flight.getTo().getName() + "\n");
+            LinkedList<Flight> route = null;
+            try{
+                 route = map.getAirportMap().get(args[0]).minDistance(map, map.getAirportMap().get(args[0]),
+                        map.getAirportMap().get(args[1]),
+                        args[2], args[3]);
+                if (map.getOutputType().equals("stdout")){
+                    if (map.getOutputFormat().equals("text")){
+                        System.out.println("PRICE");
+                        System.out.println("FLIGHTTIME");
+                        System.out.println("TOTALTIME");
+                        for (Flight flight:route){
+                            System.out.print(flight.getFrom().getName() + "#");
+                            System.out.print(flight.getAirline() + "#");
+                            System.out.print(flight.getFlightNum() + "#");
+                            System.out.print(flight.getWeekDays()+ "#");
+                            System.out.print(flight.getTo().getName() + "\n");
+                        }
+                    } else if (map.outputFormat.equals("KML")){
+                        System.out.println(KMLCreator.airportsToKML(route));
+                    }
+                } else {
+                    Loader.saveRouteToFile(route, map.getOutputType(), map.getOutputFormat());
+                    System.out.println("Route saved to file!");
                 }
-            }else if(map.getOutputType().equals("kml")) {
-                System.out.println(KMLCreator.airportsToKML(route));
-            }else{
-                Loader.saveRouteToFile(route);
-                System.out.println("Route saved to file!");
+            } catch (NullPointerException e){
+                System.out.println("No route found! Make sure that the selected airports exist on the map and to specify the starting day using Lu-Ma-Mi-Vi-Sa-Do format.");
             }
         }
         else if (input.contains("worldTrip")){
@@ -147,12 +150,16 @@ public class EDAirlines {
                     System.out.print(flight.getTo().getName() + "\n");
                 }
             } else{
-                Loader.saveRouteToFile(route);
-                System.out.println("Route saved to file!");
+                //Loader.saveRouteToFile(route);
+                System.out.println("Route saved to file!(NOT)");//TODO: DON'T BE A RETARD REMOVE THE "NOT" BEFORE RELEASE
             }
         }
         else if (input.contains("outputFormat")){
             String[] args = input.split("outputFormat ")[1].split(" ");
+            if (args.length < 2){
+                System.out.println("Not enough arguments.");
+                return;
+            }
             if (args[0].equals("text")){
                 map.setOutputFormat("text");
             } else if (args[0].equals("KML")){
@@ -161,10 +168,10 @@ public class EDAirlines {
                 System.out.println("Bad output format.");
                 return;
             }
-            if (args[1].equals("archivo")){
-                map.setOutputType("archivo");
-            } else if (args[1].equals("stdout")){
+            if (args[1].equals("stdout")){
                 map.setOutputType("stdout");
+            } else if (args[1].contains(".txt")){
+                map.setOutputType(args[1]);
             } else {
                 System.out.println("Bad output type.");
                 return;

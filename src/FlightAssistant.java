@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 public class FlightAssistant {
     private final String[] days = {"Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"};
     String outputFormat = "text";
-    String outputType = "kml";
+    String outputType = "stdout";
     private HashMap<String, Airport> airportMap;
     private List<Airport> airportList;
     /*

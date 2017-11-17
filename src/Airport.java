@@ -76,7 +76,7 @@ public class Airport {
     public LinkedList<Flight> minDistance(FlightAssistant map, Airport from, Airport to, String fmt, String departureDays){
         Airport f = from;
         Airport t = to;
-        if( f == null || t == null)
+        if( f == null || t == null || !departureDays.matches("(Lu|Ma|Mi|Ju|Vi|Sa|Do|-)+"))
             return null;
         String [] s = departureDays.split("-");
         LinkedList<Flight> bestRoute = null;
