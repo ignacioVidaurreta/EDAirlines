@@ -71,12 +71,10 @@ public class Airport {
     }
 
     // Los pesos deben ser positivos
-    public LinkedList<Flight> minDistance(String fmt, String departureDays){
+    public LinkedList<Flight> minDistance(Airport from, Airport to, String fmt, String departureDays){
         // clearMarks();
-        // Airport f = airports.get(from);
-        // Airport t = airports.get(to);
-        Airport f = null;
-        Airport t = null;
+        Airport f = from;
+        Airport t = to;
         if( f == null || t == null || t.neighbors.size() == 0)
             return null;
         String [] s = departureDays.split("-");

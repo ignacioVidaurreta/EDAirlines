@@ -7,12 +7,13 @@ import java.util.Scanner;
  * Created by Bensas on 11/2/17.
  */
 public class EDAirlines {
-    public void main(String[] args){
+
+    public static void main(String[] args){
         FlightAssistant flightAssistant = new FlightAssistant();
 
         Scanner scanner = new Scanner(System.in);
         String input;
-        System.out.println("Please enter a command below (enter \"exit\" to end the program and save the chain):");
+        System.out.println("Please enter a command below (enter \"exit\" to end the program):");
         while (!(input = scanner.nextLine()).equals("exit")){
             try{
                 processInput(input, flightAssistant);
@@ -22,16 +23,25 @@ public class EDAirlines {
             }
         }
     }
+
     public static void processInput(String input, FlightAssistant map) throws NumberFormatException{
         if (input.contains("insert airport")){
             String[] args = input.split("insert airport ")[1].split(" ");
-            if (map.addAirport(new Airport(args[1], Float.parseFloat(args[2]), Float.parseFloat(args[3]))))
+            if (args.length < 3){
+                System.out.println("Not enough arguments.");
+                return;
+            }
+            if (map.addAirport(new Airport(args[0], Float.parseFloat(args[1]), Float.parseFloat(args[2]))))
                 System.out.println("Airport inserted successfully!");
             else
                 System.out.println("There was an error inserting the airport.");
         }
         else if (input.contains("delete airport")){
             String[] args = input.split("delete airport ");
+            if (args.length < 2){
+                System.out.println("Not enough arguments.");
+                return;
+            }
             if (map.deleteAirport(args[1]))
                 System.out.println("Airport " + args[1] + " deleted successfully!");
             else
@@ -56,6 +66,10 @@ public class EDAirlines {
 
         else if (input.contains("insert flight")){
             String[] args = input.split("insert flight ")[1].split(" ");
+            if (args.length < 8){
+                System.out.println("Not enough arguments.");
+                return;
+            }
             if (map.insertFlight(new Flight(args[0], Integer.parseInt(args[1]), args[2], map.getAirportMap().get(args[3]),
                     map.getAirportMap().get(args[4]), args[5], args[6], Double.parseDouble(args[7]))))
                 System.out.println("Flights inserted successfully!");
@@ -89,7 +103,18 @@ public class EDAirlines {
         }
         else if (input.contains("findRoute")){
             String[] args = input.split("findRoute ")[1].split(" ");
-            LinkedList<Flight> route = map.getAirportMap().get(args[0]).minDistance(args[1], args[2]);
+            if (args.length < 4){
+                System.out.println("Not enough arguments.");
+                return;
+            }
+            System.out.println("[DEBUG] Parameters: " + args[0] + " - " + args[1] + " - " + args[2] + " - " + args[3]);
+            LinkedList<Flight> route = map.getAirportMap().get(args[0]).minDistance(map.getAirportMap().get(args[0]),
+                                                                                    map.getAirportMap().get(args[1]),
+                                                                                    args[2], args[3]);
+            if (route == null){
+                System.out.println("No route found!");
+                return;
+            }
             if (map.getOutputType().equals("stdout")){
                 System.out.println("PRICE");
                 System.out.print("FLIGHTTIME");

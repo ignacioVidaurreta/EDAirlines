@@ -72,9 +72,9 @@ public class Flight {
     private boolean correctArguments(String airline, int flightNum, String departureDay,
                                      Airport from, Airport to, String departureTime,
                                      String duration, Double price) {
-        if (!airline.matches("[A-Za-z]{3}")) return false;
+        if (!airline.matches("[A-Za-z]+")) return false;
         if (flightNum<0) return false;
-        if (!departureDay.matches("Lu|Ma|Mi|Ju|Vi|Sa|Do|-")) return false; //TODO ver que no haya repetidos
+        if (!departureDay.matches("(Lu|Ma|Mi|Ju|Vi|Sa|Do|-)+")) return false; //TODO ver que no haya repetidos
 
         if (!departureTime.matches("[01][0-9]:[0-5][0-9]|2[0-3]:[0-5][0-9]")) return false;
         if (!duration.matches("[0-9][0-9]h[0-5][0-9]m|[0-5][0-9]m")) return false;
