@@ -74,7 +74,7 @@ public class Airport {
 
     // Los pesos deben ser positivos
     public LinkedList<Flight> minDistance(Airport from, Airport to, String fmt, String departureDays){
-        //clearMarks();
+        //clearMarks(); naos
         Airport f = from;
         Airport t = to;
         if( f == null || t == null)
