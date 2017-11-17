@@ -48,9 +48,10 @@ public class EDAirlines {
                 System.out.println("There was an error deleting the airport from file.");
         }
         else if (input.contains("insert all airports")){
-            if (input.split("insert all airports ")[1].split(" ")[1].equals("replace"))
-                map = new FlightAssistant();
-            ArrayList<Airport> airports = Loader.loadAirportsFromFile(input.split("insert all airports ")[1].split(" ")[0]);
+            String[] args = input.split("insert all airports ")[1].split(" ");
+            if (args.length == 2 && args[1].equals("replace"))
+                map.setAirportMap(new HashMap<>());
+            ArrayList<Airport> airports = Loader.loadAirportsFromFile(args[0]);
             if (airports != null){
                 for (Airport airport: airports)
                     map.addAirport(airport);
@@ -86,7 +87,8 @@ public class EDAirlines {
             }
         }
         else if (input.contains("insert all flight")){
-            if (input.split("insert all flight ")[1].split(" ")[1].equals("replace"))
+            String[] args = input.split("insert all flight ")[1].split(" ");
+            if (args.length == 2 && args[1].equals("replace"))
                 map.setAirlinesFlights(new HashMap<>());
             ArrayList<Flight> flights = Loader.loadFlightsFromFile(input.split("insert all flight ")[1].split(" ")[0], map);
             if (flights != null){
@@ -110,14 +112,17 @@ public class EDAirlines {
             LinkedList<Flight> route = null;
             try{
                  route = map.getAirportMap().get(args[0]).minDistance(map, map.getAirportMap().get(args[0]),
-                        map.getAirportMap().get(args[1]),
-                        args[2], args[3]);
+                                                                            map.getAirportMap().get(args[1]),
+                                                                            args[2], args[3]);
                 if (map.getOutputType().equals("stdout")){
                     if (map.getOutputFormat().equals("text")){
-                        System.out.println("PRICE");
+                        System.out.println("Precio#");
                         System.out.println("FLIGHTTIME");
                         System.out.println("TOTALTIME");
                         for (Flight flight:route){
+                            if (flight == null){
+                                continue;
+                            }
                             System.out.print(flight.getFrom().getName() + "#");
                             System.out.print(flight.getAirline() + "#");
                             System.out.print(flight.getFlightNum() + "#");
@@ -133,6 +138,7 @@ public class EDAirlines {
                 }
             } catch (NullPointerException e){
                 System.out.println("No route found! Make sure that the selected airports exist on the map and to specify the starting day using Lu-Ma-Mi-Vi-Sa-Do format.");
+                e.printStackTrace();
             }
         }
         else if (input.contains("worldTrip")){
