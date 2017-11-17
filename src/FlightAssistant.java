@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,6 +70,68 @@ public class FlightAssistant {
     }
     public void setAirlinesFlights(HashMap<String, HashMap<Integer, Flight>> newFlights){
         this.airlinesFlights = newFlights;
+    }
+
+    //mediante el algoritmo de componentes fuertemente conexas de Tarjan determina si el
+    //grafo es fuertemente conexo.
+    public boolean isStronglyConnected(){
+        return  stronglyConnectedComponents().size() == 1;
+    }
+
+    //las dos siguientes funciones utilizan el algoritmo de Tarjan para separar el grafo en componentes
+    //fuertemente conexas. Pseudocódigo para el algoritmo tomado de
+    //https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm
+    public List<List<String>> stronglyConnectedComponents(){
+
+        clearMarks();
+        List<List<String>> result = new ArrayList<>();
+        Deque<Airport> stack = new LinkedList<>();
+        for(Airport n : airportList){
+            if(n.getIndex() == -1) {
+                strongConnect(n,result,stack,0);
+            }
+        }
+        return result;
+    }
+
+    private void strongConnect(Airport n, List<List<String>> result, Deque<Airport> stack, int index){
+
+        n.setIndex(index);
+        n.setLowLink(index);
+        stack.push(n);
+        n.setVisited(true);
+
+        for(Flight e : n.getNeighbors()){
+
+            if(e.getTo().getIndex() == -1) {
+                index += 1;
+                strongConnect(e.getTo(), result, stack, index + 1);
+                n.setLowLink(Math.min(n.getLowLink(), e.getTo().getLowLink()));
+            }
+            else if(e.getTo().isVisited())
+                n.setLowLink(Math.min(n.getLowLink(), e.getTo().getIndex()));
+        }
+
+        Airport aux;
+        List<String> l = new LinkedList<>();
+        if(n.getLowLink() == n.getIndex()){
+            do {
+                aux = stack.pop();
+                l.add(aux.getName());
+                aux.setVisited(false);
+            }
+            while(!aux.equals(n));
+        }
+        if(l.size() != 0)
+            result.add(l);
+    }
+
+    private void clearMarks(){
+        for(Airport a: airportList){
+            a.setVisited(false);
+            a.setIndex(-1);
+            a.setLowLink(-1);
+        }
     }
 
     public List<Airport> getAirportList(){
