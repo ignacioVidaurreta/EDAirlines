@@ -1,10 +1,7 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class Airport {
-    private String name, location;
+    private String name;
     private double longitude, latitude;
     private List<Flight> neighbors;
     private boolean visited;
@@ -18,9 +15,8 @@ public class Airport {
      * @param longitude
      * @param latitude
      */
-    Airport(String name, String location, double longitude, double latitude){
+    Airport(String name, double longitude, double latitude){
         this.name = name;
-        this.location = location;
         this.longitude = longitude;
         this.latitude = latitude;
         this.neighbors = new ArrayList<>();
@@ -46,13 +42,27 @@ public class Airport {
 
     public class PQAirport implements Comparable<PQAirport> {
         Airport a;
-        Integer arrivalDay;
+        Integer dptDay;
         double d;
+        LinkedList<Flight> route;
 
-        public PQAirport(Airport a, double d, Integer arrivalDay) {
+        public PQAirport(Airport a, double d, LinkedList<Flight> route, Flight f) {
             this.a = a;
             this.d = d;
-            this.arrivalDay = arrivalDay;
+            this.route = new LinkedList<>();
+            for(Flight aux : route)
+                this.route.add(aux);
+            this.route.add(f);
+        }
+
+        public PQAirport(Airport a, double d, Integer dptDay, LinkedList<Flight> route, Flight f) {
+            this.a = a;
+            this.d = d;
+            this.dptDay = dptDay;
+            this.route = new LinkedList<>();
+            for(Flight aux : route)
+                this.route.add(aux);
+            this.route.add(f);
         }
 
         public int compareTo(PQAirport other) {
@@ -61,57 +71,107 @@ public class Airport {
     }
 
     // Los pesos deben ser positivos
-    public double minDistance(String from, String to, String fmt, String departureDays){
+    public LinkedList<Flight> minDistance(String fmt, String departureDays){
+        // clearMarks();
         // Airport f = airports.get(from);
         // Airport t = airports.get(to);
         Airport f = null;
         Airport t = null;
-        if( f == null || t == null)
-            return -1;
-        boolean thereIsPossilbeFlight = false;
-        for (Flight flight : f.neighbors) {
-            String [] s = departureDays.split("-");
-            for (String aux : s) {
-                if (flight.getWeekDays().containsKey(aux)) {
-                    thereIsPossilbeFlight = true;
-                    break;
+        if( f == null || t == null || t.neighbors.size() == 0)
+            return null;
+        String [] s = departureDays.split("-");
+        LinkedList<Flight> bestRoute = null;
+        double bestCost = 0;
+        for (String posDay: s) {
+            boolean firstCycle = true;
+            PriorityQueue<PQAirport> pq = new PriorityQueue();
+            pq.offer(new PQAirport(f, 0, null, null, null));
+            while(!pq.isEmpty()){
+                PQAirport aux = pq.poll();
+                if(aux.a == t) {
+                    if(bestCost == 0 || aux.d <= bestCost) {
+                        bestRoute = aux.route;
+                        bestCost = aux.d;
+                    }
                 }
-            }
-            if(thereIsPossilbeFlight)
-                break;
-        }
-        if (!thereIsPossilbeFlight)
-            return -1;
-        PriorityQueue<PQAirport> pq = new PriorityQueue();
-        pq.offer(new PQAirport(f, 0, null));
-        double prevAux = 0;
-        while(!pq.isEmpty()){
-            PQAirport aux = pq.poll();
-            if(aux.a == t)
-                return aux.d;
-            if(!aux.a.visited) {
-                aux.a.visited = true;
-                for (Flight flght : aux.a.neighbors) {
-                    if(!flght.getTo().visited) {
-                        if(fmt.equals("pr")) {
-                            pq.offer(new PQAirport(flght.getTo(), aux.d + flght.getPrice(), null));
-                        } else if(fmt.equals("ft")) {
-                            pq.offer(new PQAirport(flght.getTo(), aux.d + flght.getDurationInDouble(), null));
+                if(!aux.a.visited) {
+                    aux.a.visited = true;
+                    for (Flight flght : aux.a.neighbors) {
+                        if(firstCycle && flght.getWeekDays().containsKey(posDay)){
+                            firstCycle = false;
+                            if (fmt.equals("pr")) {
+                                pq.offer(new PQAirport(flght.getTo(), aux.d + flght.getPrice(), null, flght));
+                            } else if (fmt.equals("ft")) {
+                                pq.offer(new PQAirport(flght.getTo(), aux.d + flght.getDurationInDouble(), null, flght));
+                            } else {
+                                double arrival = getArrival(aux.route.getLast());
+                                Integer nextDptDay = getBestDay(flght.getWeekDays(), flght.getDepartureInDouble(), aux.dptDay, arrival);
+                                if (nextDptDay > 0) {
+                                    double totalDuration = getTotalTime(arrival, aux.dptDay, flght.getDepartureInDouble(), nextDptDay);
+                                    pq.offer(new PQAirport(flght.getTo(), aux.d + totalDuration, nextDptDay, aux.route, flght));
+                                }
+                            }
                         } else {
-
+                            if (!flght.getTo().visited) {
+                                if (fmt.equals("pr")) {
+                                    pq.offer(new PQAirport(flght.getTo(), aux.d + flght.getPrice(), aux.route, flght));
+                                } else if (fmt.equals("ft")) {
+                                    pq.offer(new PQAirport(flght.getTo(), aux.d + flght.getDurationInDouble(), aux.route, flght));
+                                } else {
+                                    double arrival = getArrival(aux.route.getLast());
+                                    Integer nextDptDay = getBestDay(flght.getWeekDays(), flght.getDepartureInDouble(), aux.dptDay, arrival);
+                                    if (nextDptDay > 0) {
+                                        double totalDuration = getTotalTime(arrival, aux.dptDay, flght.getDepartureInDouble(), nextDptDay);
+                                        pq.offer(new PQAirport(flght.getTo(), aux.d + totalDuration, nextDptDay, aux.route, flght));
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-        return -1;
+        if(bestRoute != null) {
+            printRoute(bestRoute);
+            return bestRoute;
+        }
+        return null;
     }
 
+
+    public double getArrival(Flight f) {
+        double aux = f.getDepartureInDouble() + f.getDurationInDouble();
+        if(aux >= 1440)
+            aux -= 1440;
+        return aux;
+    }
+
+    public Integer getBestDay(HashMap<String, Integer> hm, double dpt, Integer d, double arrival) {
+        Integer best = 0;
+        boolean firstCycle = true;
+        for(Integer availableDay: hm.values()) {
+            Integer aux = availableDay - d;
+            if(aux <= 0){
+                if(aux == 0 && dpt > arrival)
+                    return availableDay;
+                aux += 7;
+            }
+            if(firstCycle) {
+                best = aux;
+                firstCycle = false;
+            } else {
+                if(aux > best)
+                    return best;
+                best = aux;
+            }
+        }
+        return best;
+    }
 
     public double getTotalTime(double arrivalTime, Integer day, double departureTime, Integer departureDay) {
         int addDay = 0;
         double arrivalAux = arrivalTime;
-        while(arrivalAux > 1440) {
+        while(arrivalAux >= 1440) {
             addDay += 1;
             arrivalAux -= 1440;
         }
@@ -123,6 +183,11 @@ public class Airport {
         return fulltime;
     }
 
+    public void printRoute(LinkedList<Flight> l) {
+        for (Flight f: l) {
+            System.out.println("Origin: " + f.getFrom().getName() + ", To: " + f.getTo().getName() + ", Airline: " + f.getAirline());
+        }
+    }
 
     public boolean isVisited() {
         return visited;
