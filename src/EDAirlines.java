@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.Scanner;
 
 /**
- * Created by Bensas on 11/2/17.
+ *  Main Program
  */
 public class EDAirlines {
 

@@ -12,11 +12,11 @@ public class Flight {
     /**
      * Creates a flight from one airport to another
      * @param airline Name of the airline (max 3 chars)
-     * @param flightNum integer that identifies the flight inside an airline
-     * @param from from what airport
-     * @param to   to what airport
+     * @param flightNum Integer that identifies the flight inside an airline
+     * @param from Origin
+     * @param to   Destination
      * @param departureTime
-     * @param duration
+     * @param duration Trip duration
      * @param price
      */
     public Flight(String airline, int flightNum, String departureDay,
@@ -35,10 +35,13 @@ public class Flight {
         this.price = price;
         parseAndSetWeekDays(departureDay);
     }
-    public Flight(){
-        //doNothing
-    }
+    //Empty Flight
+    public Flight(){}
 
+    /**
+     * Recieves and parses departureDay
+     * @param departureDay
+     */
     public void parseAndSetWeekDays(String departureDay){
         weekDays = new HashMap<>();
         String [] aux = departureDay.split("-");

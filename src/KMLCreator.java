@@ -1,7 +1,7 @@
 import java.util.List;
 
 /**
- *  Se encarga de generar un string con el formato correspondiente a un documento KML
+ *  Generates a string with the format of a KML document
  */
 public class KMLCreator {
 
@@ -17,7 +17,7 @@ public class KMLCreator {
 
         for (Flight flight : route)
             attachPlacemark(str, flight.getFrom(), buildDescription(flight));
-        attachPlacemark(str,lastFlight.getTo(), "Aeropuerto destino");
+        attachPlacemark(str,lastFlight.getTo(), "Destination");
 
         str.append(KML_CLOSER);
 
@@ -26,8 +26,8 @@ public class KMLCreator {
 
     private static String buildDescription(Flight flight) {
         StringBuffer str = new StringBuffer();
-        str.append("El vuelo " + flight.getFlightNum());
-        str.append(" parte con destino a " + flight.getDestination());
+        str.append("The flight " + flight.getFlightNum());
+        str.append(" deploys with destinaton" + flight.getDestination());
         return str.toString();
     }
 

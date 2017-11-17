@@ -8,8 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Manages Airports and flights
+ */
 public class FlightAssistant {
-    private final String[] days = {"Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"};
     String outputFormat = "text";
     String outputType = "stdout";
     private HashMap<String, Airport> airportMap;
