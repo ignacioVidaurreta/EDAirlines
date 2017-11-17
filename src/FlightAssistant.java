@@ -3,10 +3,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 public class FlightAssistant {
     private final String[] days = {"Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"};
     String outputFormat = "text";
-    String outputType = "stdout";
+    String outputType = "kml";
     private HashMap<String, Airport> airportMap;
     private List<Airport> airportList;
     /*
@@ -37,7 +42,7 @@ public class FlightAssistant {
         if (a == null) return false;
         for( Flight f : a.getNeighbors()){
             if (f.getFrom().equals(a)) {
-                    airlinesFlights.get(f.getAirline()).remove(f.getFlightNum());
+                airlinesFlights.get(f.getAirline()).remove(f.getFlightNum());
             }
         }
         airportMap.remove(name);
@@ -90,4 +95,3 @@ public class FlightAssistant {
         this.outputType = outputType;
     }
 }
-

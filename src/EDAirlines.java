@@ -125,7 +125,9 @@ public class EDAirlines {
                     System.out.print(flight.getWeekDays()+ "#");
                     System.out.print(flight.getTo().getName() + "\n");
                 }
-            } else{
+            }else if(map.getOutputType().equals("kml")) {
+                System.out.println(KMLCreator.airportsToKML(route));
+            }else{
                 Loader.saveRouteToFile(route);
                 System.out.println("Route saved to file!");
             }

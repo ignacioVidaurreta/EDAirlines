@@ -5,7 +5,7 @@ public class Flight {
     private int flightNum;
     private HashMap<String, Integer> weekDays;
     private Airport from, to;
-    //private String origin, destination;
+    private String origin, destination;
     private String departureTime, duration;
     private double price;
 
@@ -26,8 +26,8 @@ public class Flight {
         }
         this.airline = airline;
         this.flightNum = flightNum;
-//        this.origin = ori;
-//        this.destination = destination;
+        this.origin = from.getName();
+        this.destination = to.getName();
         this.from = from;
         this.to = to;
         this.departureTime = departureTime;
@@ -135,13 +135,13 @@ public class Flight {
         this.price = price;
     }
 
-//    public String getOrigin() {
-//        return origin;
-//    }
-//
-//    public String getDestination() {
-//        return destination;
-//    }
+    public String getOrigin() {
+        return origin;
+    }
+
+    public String getDestination() {
+       return destination;
+    }
 
     public String getDepartureTime() {
         return departureTime;
