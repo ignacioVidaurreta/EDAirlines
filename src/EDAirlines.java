@@ -79,7 +79,8 @@ public class EDAirlines {
         }
         else if (input.contains("delete flight")){
             try{
-                map.getAirlinesFlights().get(input.split("delete flight ")[1].split(" ")[0]).remove(input.split("delete flight ")[1].split(" ")[1]);
+                System.out.println(input.split("delete flight ")[1].split(" ")[0] + " - " + Integer.parseInt(input.split("delete flight ")[1].split(" ")[1]));
+                map.removeFlight(input.split("delete flight ")[1].split(" ")[0], Integer.parseInt(input.split("delete flight ")[1].split(" ")[1]));
                 System.out.println("Flight deleted successfully!");
             } catch (Exception e){
                 e.printStackTrace();
@@ -127,7 +128,7 @@ public class EDAirlines {
                             System.out.print(flight.getFrom().getName() + "#");
                             System.out.print(flight.getAirline() + "#");
                             System.out.print(flight.getFlightNum() + "#");
-                            System.out.print(flight.getWeekDays()+ "#");
+                            System.out.print(args[3] + "#");
                             System.out.print(flight.getTo().getName() + "\n");
                         }
                         System.out.println("Total price: " + totalPrice);
@@ -141,26 +142,47 @@ public class EDAirlines {
                 }
             } catch (NullPointerException e){
                 System.out.println("No route found! Make sure that the selected airports exist on the map and to specify the starting day using Lu-Ma-Mi-Vi-Sa-Do format.");
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
         else if (input.contains("worldTrip")){
             String[] args = input.split("worldTrip ")[1].split(" ");
-            LinkedList<Flight> route = new LinkedList<>(); //TODO: GET THE WORLD TRIP ROUTE
-            if (map.getOutputType().equals("stdout")){
-                System.out.println("PRICE");
-                System.out.print("FLIGHTTIME");
-                System.out.print("TOTALTIME");
-                for (Flight flight:route){
-                    System.out.print(flight.getFrom().getName() + "#");
-                    System.out.print(flight.getAirline() + "#");
-                    System.out.print(flight.getFlightNum() + "#");
-                    System.out.print(flight.getWeekDays().get(0) + "#");
-                    System.out.print(flight.getTo().getName() + "\n");
+            if (args.length < 2){
+                System.out.println("Not enough arguments.");
+                return;
+            }
+            LinkedList<Flight> route = null;
+            try{
+                route = (LinkedList<Flight>)map.worldTour(map.getAirportMap().get(args[0]), args[1]);
+                if (map.getOutputType().equals("stdout")){
+                    if (map.getOutputFormat().equals("text")){
+                        float totalPrice = 0;
+                        double totalFlightTime = 0;
+                        for (Flight flight:route){
+                            System.out.println("0");
+                            if (flight == null){
+                                continue;
+                            }
+                            totalPrice += flight.getPrice();
+                            totalFlightTime += flight.getDurationInDouble();
+                            System.out.print(flight.getFrom().getName() + "#");
+                            System.out.print(flight.getAirline() + "#");
+                            System.out.print(flight.getFlightNum() + "#");
+                            System.out.print(args[3] + "#");
+                            System.out.print(flight.getTo().getName() + "\n");
+                        }
+                        System.out.println("Total price: " + totalPrice);
+                        System.out.println("Flight Time: " + Flight.durationToString(totalFlightTime));
+                    } else if (map.outputFormat.equals("KML")){
+                        System.out.println(KMLCreator.airportsToKML(route));
+                    }
+                } else {
+                    Loader.saveRouteToFile(route, map.getOutputType(), map.getOutputFormat());
+                    System.out.println("World trip saved to file!");
                 }
-            } else{
-                //Loader.saveRouteToFile(route);
-                System.out.println("Route saved to file!(NOT)");//TODO: DON'T BE A RETARD REMOVE THE "NOT" BEFORE RELEASE
+            } catch (NullPointerException e){
+                System.out.println("No World trip found! Make sure that the selected airport exists on the map and to specify the starting days using Lu-Ma-Mi-Vi-Sa-Do format.");
+                //e.printStackTrace();
             }
         }
         else if (input.contains("outputFormat")){

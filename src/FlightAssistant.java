@@ -38,7 +38,7 @@ public class FlightAssistant {
     public boolean deleteAirport(String name){
         Airport a = airportMap.get(name);
         if (a == null) return false;
-        for( Flight f : a.getNeighbors()){
+        for(Flight f : a.getNeighbors()){
             if (f.getFrom().equals(a)) {
                 airlinesFlights.get(f.getAirline()).remove(f.getFlightNum());
             }
@@ -49,9 +49,14 @@ public class FlightAssistant {
     }
 
     public boolean insertFlight(Flight flight) {
-        if (!airportMap.containsKey(flight.getFrom().getName()) || !airportMap.containsKey(flight.getTo().getName())) {
-            return false;
+        try{
+            if (!airportMap.containsKey(flight.getFrom().getName()) || !airportMap.containsKey(flight.getTo().getName())) {
+                return false;
+            }
+        } catch (NullPointerException e){
+            System.out.println("Some flights going to or from airports that are not on the map! (Not inserted)");
         }
+
 
         flight.getFrom().getNeighbors().add(flight);
 
@@ -59,6 +64,17 @@ public class FlightAssistant {
 
         airlinesFlights.get(flight.getAirline()).put(flight.getFlightNum(), flight);
         return true;
+    }
+
+    public void removeFlight(String airline, int flightNum){
+        for (Airport port: airportList){
+            for (Flight flight: port.getNeighbors())
+                if (flight.equals(airlinesFlights.get(airline).get(flightNum))){
+                    port.getNeighbors().remove(flight);
+                    break;
+                }
+        }
+        airlinesFlights.get(airline).remove(flightNum);
     }
 
     public HashMap<String, Airport> getAirportMap(){
@@ -171,7 +187,7 @@ public class FlightAssistant {
         while(notVisitedAirports.size() == 0){
             first = true;
             bestFlight = selectMinFlightByCondition(currentAirport.getNeighbors(),condition,notVisitedAirports);
-            //hace un dijkstra para cada aeropuerto no visitado y agarrra el de menor peso
+            //hace un dijkstra para cada aeropuerto no visitado y toma el de menor peso
             if(bestFlight == null){
                 for(Airport a: notVisitedAirports){
                     currentDijkstra = new LinkedList<>();
