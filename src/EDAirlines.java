@@ -147,7 +147,7 @@ public class EDAirlines {
         }
         else if (input.contains("worldTrip")){
             String[] args = input.split("worldTrip ")[1].split(" ");
-            if (args.length < 2){
+            if (args.length < 3){
                 System.out.println("Not enough arguments.");
                 return;
             }
@@ -159,7 +159,6 @@ public class EDAirlines {
                         float totalPrice = 0;
                         double totalFlightTime = 0;
                         for (Flight flight:route){
-                            System.out.println("0");
                             if (flight == null){
                                 continue;
                             }
@@ -168,7 +167,7 @@ public class EDAirlines {
                             System.out.print(flight.getFrom().getName() + "#");
                             System.out.print(flight.getAirline() + "#");
                             System.out.print(flight.getFlightNum() + "#");
-                            System.out.print(args[3] + "#");
+                            System.out.print(args[2] + "#");
                             System.out.print(flight.getTo().getName() + "\n");
                         }
                         System.out.println("Total price: " + totalPrice);
@@ -208,11 +207,8 @@ public class EDAirlines {
                 return;
             }
         }
-        else if (input.contains("help")){
-            System.out.println("The command is invalid. Enter \"help\" for a list of commands.");
-        }
         else {
-            System.out.println("The command is invalid. Enter \"help\" for a list of commands.");
+            System.out.println("The command is invalid.");
         }
     }
 
