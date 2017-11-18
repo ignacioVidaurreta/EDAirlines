@@ -278,4 +278,33 @@ public class FlightAssistant {
     private void clearAirportVisited(){
         for(Airport a:airportList)  a.setVisited(false);
     }
+
+    public static void main(String[] args){
+
+        FlightAssistant fa = new FlightAssistant();
+        fa.addAirport(new Airport("BUE", 100, 200));
+        fa.addAirport(new Airport("RIO", 200, 300));
+        fa.addAirport(new Airport("HKG",0,0));
+        fa.addAirport(new Airport("MAD",0,0));
+        fa.addAirport(new Airport("LON",0,0));
+        fa.addAirport(new Airport("NYC",0,0));
+        fa.addAirport(new Airport("BER",0,0));
+        fa.addAirport(new Airport("VOL",0,0));
+        fa.addAirport(new Airport("LIM",0,0));
+
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("BUE"), fa.getAirportMap().get("RIO"),"12:00","12h00m",100));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("RIO"), fa.getAirportMap().get("HKG"),"12:00","12h00m",100));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("HKG"), fa.getAirportMap().get("BUE"),"12:00","12h00m",100));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("HKG"), fa.getAirportMap().get("MAD"),"12:00","12h00m",100));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("MAD"), fa.getAirportMap().get("LON"),"12:00","12h00m",100));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("LON"), fa.getAirportMap().get("NYC"),"12:00","12h00m",100));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("NYC"), fa.getAirportMap().get("BER"),"12:00","12h00m",100));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("BER"), fa.getAirportMap().get("VOL"),"12:00","12h00m",100));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("VOL"), fa.getAirportMap().get("MAD"),"12:00","12h00m",100));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("VOL"), fa.getAirportMap().get("LIM"),"12:00","12h00m",100));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("LIM"), fa.getAirportMap().get("BUE"),"12:00","12h00m",100));
+        for(Flight f: fa.getAirportMap().get("BUE").minDistance(fa,fa.getAirportMap().get("BUE"), fa.getAirportMap().get("LIM"), "pr", "Lu")){
+            System.out.print(f.getTo().getName() + " ");
+        }
+    }
 }
