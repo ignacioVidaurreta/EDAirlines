@@ -78,5 +78,10 @@ public class FlightAssistantTest {
         Assert.assertFalse(fa.getAirlinesFlights().get("RAN").containsKey(200));
     }
 
+    @Test
+    public void stronglyConnectedComponentsTest(){
+        Assert.assertEquals(3,fa.stronglyConnectedComponents().size());
+    }
+
 }
 

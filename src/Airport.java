@@ -3,7 +3,7 @@ import java.util.*;
 public class Airport {
     private String name;
     private double longitude, latitude;
-    private List<Flight> neighbors;
+    private List<Flight> neighbors = new ArrayList<>();
     private boolean visited;
     private int index = -1;
     private int lowLink = -1;
@@ -19,7 +19,6 @@ public class Airport {
         this.name = name;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.neighbors = new ArrayList<>();
         visited = false;
     }
 
@@ -92,6 +91,8 @@ public class Airport {
             return null;
         //Divide las fechas dadas
         String [] s = departureDays.split("-");
+        if (s.length == 0)
+            s = new String[]{departureDays};
         LinkedList<Flight> bestRoute = null;
         double bestCost = 0;
         //Hacemos un dijkstra por cada fecha
