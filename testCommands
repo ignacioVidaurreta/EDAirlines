@@ -2,15 +2,7 @@ insert all airports airports.eda
 insert all flight flights.eda
 findRoute AEP LIM ft Lu
 
-insert airport AEP -34.5592 -58.4156
-insert airport MIA 25.79319953918457 -80.29060363769531
-insert airport MVD -34.838401794433594 -56.030799865722656
-insert airport LIM -12.0219 -77.114304
-insert flight AA 1432 Lu-Ju-Ma-Sa AEP MIA 08:45 08h45m 850.00
-insert flight LAN 1337 Ma-Ju-Vi MIA LIM 18:05 07h23m 400.00
-insert flight GOL 0042 Mi AEP LIM 17:55 03h24m 2000.00
 outputFormat KML plan.txt
 findRoute AEP MIA ft Ju
 findRoute MIA LIM pr Ma
 findRoute AEP LIM ft Lu
-

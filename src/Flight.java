@@ -157,6 +157,21 @@ public class Flight {
         return ((hours[0] - '0')* 60 + (hours[1] - '0') * 6 + (minutes[0] - '0')) * 10 + (minutes[1] - '0');
     }
 
+    public static String durationToString(double duration){
+        double aux = duration;
+        char[] result = new char[6];
+        result[0] = (char)('0' + (int)aux/600);
+        aux -= (int)aux/600 * 600;
+        result[1] = (char)('0' +(int)aux/60);
+        aux -= (int)aux/60 * 60;
+        result[2] = 'h';
+        result[3] = (char)('0' +(int)aux/10);
+        aux -= (int)aux/10 * 10;
+        result[4] = (char)('0' +(int)aux);
+        result[5] = 'm';
+        return new String(result);
+    }
+
     public double getDepartureInDouble() {
         char[] hours = departureTime.substring(0, 2).toCharArray();
         char[] minutes = departureTime.substring(3).toCharArray();
