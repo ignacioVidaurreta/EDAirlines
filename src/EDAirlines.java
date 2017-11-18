@@ -116,19 +116,22 @@ public class EDAirlines {
                                                                             args[2], args[3]);
                 if (map.getOutputType().equals("stdout")){
                     if (map.getOutputFormat().equals("text")){
-                        System.out.println("Precio#");
-                        System.out.println("FLIGHTTIME");
-                        System.out.println("TOTALTIME");
+                        float totalPrice = 0;
+                        double totalFlightTime = 0;
                         for (Flight flight:route){
                             if (flight == null){
                                 continue;
                             }
+                            totalPrice += flight.getPrice();
+                            totalFlightTime += flight.getDurationInDouble();
                             System.out.print(flight.getFrom().getName() + "#");
                             System.out.print(flight.getAirline() + "#");
                             System.out.print(flight.getFlightNum() + "#");
                             System.out.print(flight.getWeekDays()+ "#");
                             System.out.print(flight.getTo().getName() + "\n");
                         }
+                        System.out.println("Total price: " + totalPrice);
+                        System.out.println("Flight Time: " + Flight.durationToString(totalFlightTime));
                     } else if (map.outputFormat.equals("KML")){
                         System.out.println(KMLCreator.airportsToKML(route));
                     }

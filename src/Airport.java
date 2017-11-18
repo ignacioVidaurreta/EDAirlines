@@ -91,8 +91,6 @@ public class Airport {
             return null;
         //Divide las fechas dadas
         String [] s = departureDays.split("-");
-        if (s.length == 0)
-            s = new String[]{departureDays};
         LinkedList<Flight> bestRoute = null;
         double bestCost = 0;
         //Hacemos un dijkstra por cada fecha
