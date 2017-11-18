@@ -156,6 +156,8 @@ public class FlightAssistant {
     }
 
     public List<Flight> worldTour(Airport startAirport, String condition){
+        clearAirportVisited();
+        if(!isStronglyConnected())  return null;
         if(condition.equals("tt"))  return null;
         List<Airport>   notVisitedAirports = new LinkedList<>(airportList);
         notVisitedAirports.remove(startAirport);
