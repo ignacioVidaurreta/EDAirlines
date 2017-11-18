@@ -80,7 +80,11 @@ public class FlightAssistantTest {
 
     @Test
     public void stronglyConnectedComponentsTest(){
-        Assert.assertEquals(3,fa.stronglyConnectedComponents().size());
+        Assert.assertEquals(2,fa.stronglyConnectedComponents().size());
+        fa.insertFlight(new Flight("RAN", 200, "Lu", fa.getAirportMap().get("BUE"), fa.getAirportMap().get("RIO"), "12:45", "35m", 1200));
+        fa.insertFlight(new Flight("RAN", 200, "Lu", fa.getAirportMap().get("RIO"), fa.getAirportMap().get("BUE"), "12:45", "35m", 1200));
+        Assert.assertEquals(1, fa.stronglyConnectedComponents().size());
+        Assert.assertEquals(true, fa.isStronglyConnected());
     }
 
 }
