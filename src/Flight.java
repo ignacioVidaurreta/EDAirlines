@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Flight {
     private String airline;
@@ -89,6 +90,7 @@ public class Flight {
 
         return true;
     }
+
 
     //getters and setters
     public String getAirline() {
