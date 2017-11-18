@@ -186,7 +186,7 @@ public class FlightAssistant {
         double bestDijkstraCost = 0;
         boolean first;
 
-        while(notVisitedAirports.size() == 0){
+        while(notVisitedAirports.size() != 0){
             first = true;
             bestFlight = selectMinFlightByCondition(currentAirport.getNeighbors(),condition,notVisitedAirports);
             //hace un dijkstra para cada aeropuerto no visitado y toma el de menor peso
@@ -224,7 +224,7 @@ public class FlightAssistant {
         Double cost;
         Flight flight;
         PQA prev;
-        public PQA(Airport airport,Flight flight,Double cost,PQA prev){
+        PQA(Airport airport,Flight flight,Double cost,PQA prev){
             this.airport = airport;
             this.cost = cost;
             this.flight = flight;
@@ -284,27 +284,28 @@ public class FlightAssistant {
         FlightAssistant fa = new FlightAssistant();
         fa.addAirport(new Airport("BUE", 100, 200));
         fa.addAirport(new Airport("RIO", 200, 300));
-        fa.addAirport(new Airport("HKG",0,0));
-        fa.addAirport(new Airport("MAD",0,0));
-        fa.addAirport(new Airport("LON",0,0));
-        fa.addAirport(new Airport("NYC",0,0));
-        fa.addAirport(new Airport("BER",0,0));
-        fa.addAirport(new Airport("VOL",0,0));
-        fa.addAirport(new Airport("LIM",0,0));
+        fa.addAirport(new Airport("HKG",20,0));
+        fa.addAirport(new Airport("MAD",30,0));
+        fa.addAirport(new Airport("LON",40,0));
+        fa.addAirport(new Airport("NYC",50,0));
+        fa.addAirport(new Airport("BER",60,0));
+        fa.addAirport(new Airport("VOL",70,0));
+        fa.addAirport(new Airport("LIM",80,0));
 
-        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("BUE"), fa.getAirportMap().get("RIO"),"12:00","12h00m",100));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("BUE"), fa.getAirportMap().get("RIO"),"12:00","12h00m",99));
         fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("RIO"), fa.getAirportMap().get("HKG"),"12:00","12h00m",100));
-        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("HKG"), fa.getAirportMap().get("BUE"),"12:00","12h00m",100));
-        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("HKG"), fa.getAirportMap().get("MAD"),"12:00","12h00m",100));
-        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("MAD"), fa.getAirportMap().get("LON"),"12:00","12h00m",100));
-        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("LON"), fa.getAirportMap().get("NYC"),"12:00","12h00m",100));
-        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("NYC"), fa.getAirportMap().get("BER"),"12:00","12h00m",100));
-        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("BER"), fa.getAirportMap().get("VOL"),"12:00","12h00m",100));
-        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("VOL"), fa.getAirportMap().get("MAD"),"12:00","12h00m",100));
-        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("VOL"), fa.getAirportMap().get("LIM"),"12:00","12h00m",100));
-        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("LIM"), fa.getAirportMap().get("BUE"),"12:00","12h00m",100));
-        for(Flight f: fa.getAirportMap().get("BUE").minDistance(fa,fa.getAirportMap().get("BUE"), fa.getAirportMap().get("LIM"), "pr", "Lu")){
-            System.out.print(f.getTo().getName() + " ");
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("HKG"), fa.getAirportMap().get("BUE"),"12:00","12h00m",98));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("HKG"), fa.getAirportMap().get("MAD"),"12:00","12h00m",97));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("MAD"), fa.getAirportMap().get("LON"),"12:00","12h00m",55));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("LON"), fa.getAirportMap().get("NYC"),"12:00","12h00m",32));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("NYC"), fa.getAirportMap().get("BER"),"12:00","12h00m",6));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("BER"), fa.getAirportMap().get("VOL"),"12:00","12h00m",66));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("VOL"), fa.getAirportMap().get("MAD"),"12:00","12h00m",80));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("VOL"), fa.getAirportMap().get("LIM"),"12:00","12h00m",15));
+        fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("LIM"), fa.getAirportMap().get("BUE"),"12:00","12h00m",33));
+        List<Flight> listita = fa.worldTour(fa.getAirportMap().get("BUE"),"pr");
+        for(Flight f:listita){
+            System.out.println(f.getTo().getName());
         }
     }
 }
