@@ -1,8 +1,11 @@
 insert all airports airports.eda
 insert all flight flights.eda
 findRoute AEP LIM ft Lu
-
+findRoute AEP LIM pr Lu
 outputFormat KML plan.txt
-findRoute AEP MIA ft Ju
-findRoute MIA LIM pr Ma
-findRoute AEP LIM ft Lu
+findRoute MVD SCL ft Ju
+delete flight AMA 1989
+findRoute MVD SCL ft Ju
+insert flight LUF 3947 Mi-Ju-Do SFO SCL 02:20 07h42m 850.00
+outputFormat KML world.txt
+worldTrip AEP ft Lu-Mi

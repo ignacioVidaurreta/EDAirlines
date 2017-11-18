@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  *  Main Program
@@ -26,7 +23,13 @@ public class EDAirlines {
 
     public static void processInput(String input, FlightAssistant map) throws NumberFormatException{
         if (input.contains("insert airport")){
-            String[] args = input.split("insert airport ")[1].split(" ");
+            String[] args = null;
+            try{
+                args = input.split("insert airport ")[1].split(" ");
+            } catch (ArrayIndexOutOfBoundsException e){
+                System.out.println("Not enough arguments.");
+                return;
+            }
             if (args.length < 3){
                 System.out.println("Not enough arguments.");
                 return;
@@ -48,7 +51,13 @@ public class EDAirlines {
                 System.out.println("There was an error deleting the airport from file.");
         }
         else if (input.contains("insert all airports")){
-            String[] args = input.split("insert all airports ")[1].split(" ");
+            String[] args = null;
+            try{
+                args = input.split("insert all airports ")[1].split(" ");
+            } catch (ArrayIndexOutOfBoundsException e){
+                System.out.println("Not enough arguments.");
+                return;
+            }
             if (args.length == 2 && args[1].equals("replace"))
                 map.setAirportMap(new HashMap<>());
             ArrayList<Airport> airports = Loader.loadAirportsFromFile(args[0]);
@@ -66,7 +75,13 @@ public class EDAirlines {
         }
 
         else if (input.contains("insert flight")){
-            String[] args = input.split("insert flight ")[1].split(" ");
+            String[] args = null;
+            try{
+                args = input.split("insert flight ")[1].split(" ");
+            } catch (ArrayIndexOutOfBoundsException e){
+                System.out.println("Not enough arguments.");
+                return;
+            }
             if (args.length < 8){
                 System.out.println("Not enough arguments.");
                 return;
@@ -83,12 +98,18 @@ public class EDAirlines {
                 map.removeFlight(input.split("delete flight ")[1].split(" ")[0], Integer.parseInt(input.split("delete flight ")[1].split(" ")[1]));
                 System.out.println("Flight deleted successfully!");
             } catch (Exception e){
-                e.printStackTrace();
+                //e.printStackTrace();
                 System.out.println("There was an error deleting the flights from file.");
             }
         }
         else if (input.contains("insert all flight")){
-            String[] args = input.split("insert all flight ")[1].split(" ");
+            String[] args = null;
+            try{
+                args = input.split("insert all flight ")[1].split(" ");
+            } catch (ArrayIndexOutOfBoundsException e){
+                System.out.println("Not enough arguments.");
+                return;
+            }
             if (args.length == 2 && args[1].equals("replace"))
                 map.setAirlinesFlights(new HashMap<>());
             ArrayList<Flight> flights = Loader.loadFlightsFromFile(input.split("insert all flight ")[1].split(" ")[0], map);
@@ -105,7 +126,13 @@ public class EDAirlines {
             System.out.println("Flights deleted successfully!");
         }
         else if (input.contains("findRoute")){
-            String[] args = input.split("findRoute ")[1].split(" ");
+            String[] args = null;
+            try{
+                args = input.split("findRoute ")[1].split(" ");
+            } catch (ArrayIndexOutOfBoundsException e){
+                System.out.println("Not enough arguments.");
+                return;
+            }
             if (args.length < 4){
                 System.out.println("Not enough arguments.");
                 return;
@@ -128,7 +155,7 @@ public class EDAirlines {
                             System.out.print(flight.getFrom().getName() + "#");
                             System.out.print(flight.getAirline() + "#");
                             System.out.print(flight.getFlightNum() + "#");
-                            System.out.print(args[3] + "#");
+                            System.out.print(args[3].split("-")[0] + "#");
                             System.out.print(flight.getTo().getName() + "\n");
                         }
                         System.out.println("Total price: " + totalPrice);
@@ -146,18 +173,26 @@ public class EDAirlines {
             }
         }
         else if (input.contains("worldTrip")){
-            String[] args = input.split("worldTrip ")[1].split(" ");
+            String[] args = null;
+            try{
+                args = input.split("worldTrip ")[1].split(" ");
+            } catch (ArrayIndexOutOfBoundsException e){
+                System.out.println("Not enough arguments.");
+                return;
+            }
             if (args.length < 3){
                 System.out.println("Not enough arguments.");
                 return;
             }
             LinkedList<Flight> route = null;
             try{
+                Random rnd = new Random();
                 route = (LinkedList<Flight>)map.worldTour(map.getAirportMap().get(args[0]), args[1]);
                 if (map.getOutputType().equals("stdout")){
                     if (map.getOutputFormat().equals("text")){
                         float totalPrice = 0;
                         double totalFlightTime = 0;
+                        int i = 0;
                         for (Flight flight:route){
                             if (flight == null){
                                 continue;
@@ -167,7 +202,7 @@ public class EDAirlines {
                             System.out.print(flight.getFrom().getName() + "#");
                             System.out.print(flight.getAirline() + "#");
                             System.out.print(flight.getFlightNum() + "#");
-                            System.out.print(args[2] + "#");
+                            System.out.print(flight.getWeekDays().get(i++%7-rnd.nextInt(1))+ "#");
                             System.out.print(flight.getTo().getName() + "\n");
                         }
                         System.out.println("Total price: " + totalPrice);

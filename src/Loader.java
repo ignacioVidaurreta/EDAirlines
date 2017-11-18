@@ -85,16 +85,23 @@ public class Loader {
         try{
             fileWriter = new FileWriter(new File(outputType));
             if (outputFormat.equals("text")){
-                fileWriter.write("PRICE");
-                fileWriter.write("FLIGHTTIME");
-                fileWriter.write("TOTALTIME");
+                float totalPrice = 0;
+                double totalFlightTime = 0;
                 for (Flight flight:route){
+                    if (flight == null){
+                        continue;
+                    }
+                    totalPrice += flight.getPrice();
+                    totalFlightTime += flight.getDurationInDouble();
                     fileWriter.write(flight.getFrom().getName() + "#");
                     fileWriter.write(flight.getAirline() + "#");
                     fileWriter.write(flight.getFlightNum() + "#");
                     fileWriter.write(flight.getWeekDays()+ "#");
                     fileWriter.write(flight.getTo().getName() + "\n");
                 }
+                fileWriter.write("Total price: " + totalPrice + '\n');
+                fileWriter.write("Flight Time: " + Flight.durationToString(totalFlightTime) + '\n');
+
             } else {
                 fileWriter.write(KMLCreator.airportsToKML(route));
             }
