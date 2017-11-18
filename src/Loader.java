@@ -80,27 +80,25 @@ public class Loader {
         return flight;
     }
 
-    public static void saveRouteToFile(LinkedList<Flight> route){
+    public static void saveRouteToFile(LinkedList<Flight> route, String outputType, String outputFormat){
         FileWriter fileWriter;
         try{
-            fileWriter = new FileWriter(new File("salida" + outputNum + ".txt"));
-            fileWriter.write("PRICE");
-            fileWriter.write("FLIGHTTIME");
-            fileWriter.write("TOTALTIME");
-            for (Flight flight:route){
-                fileWriter.write(flight.getFrom().getName());
-                fileWriter.write("#");
-                fileWriter.write(flight.getAirline());
-                fileWriter.write("#");
-                fileWriter.write(flight.getFlightNum());
-                fileWriter.write("#");
-                fileWriter.write(flight.getWeekDays().get(0));
-                fileWriter.write("#");
-                fileWriter.write(flight.getTo().getName());
-                fileWriter.write("\n");
+            fileWriter = new FileWriter(new File(outputType));
+            if (outputFormat.equals("text")){
+                fileWriter.write("PRICE");
+                fileWriter.write("FLIGHTTIME");
+                fileWriter.write("TOTALTIME");
+                for (Flight flight:route){
+                    fileWriter.write(flight.getFrom().getName() + "#");
+                    fileWriter.write(flight.getAirline() + "#");
+                    fileWriter.write(flight.getFlightNum() + "#");
+                    fileWriter.write(flight.getWeekDays()+ "#");
+                    fileWriter.write(flight.getTo().getName() + "\n");
+                }
+            } else {
+                fileWriter.write(KMLCreator.airportsToKML(route));
             }
             fileWriter.close();
-
         } catch (IOException e){
             e.printStackTrace();
         }

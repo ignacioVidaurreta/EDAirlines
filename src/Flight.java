@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Flight {
     private String airline;
@@ -12,11 +13,11 @@ public class Flight {
     /**
      * Creates a flight from one airport to another
      * @param airline Name of the airline (max 3 chars)
-     * @param flightNum integer that identifies the flight inside an airline
-     * @param from from what airport
-     * @param to   to what airport
+     * @param flightNum Integer that identifies the flight inside an airline
+     * @param from Origin
+     * @param to   Destination
      * @param departureTime
-     * @param duration
+     * @param duration Trip duration
      * @param price
      */
     public Flight(String airline, int flightNum, String departureDay,
@@ -35,10 +36,13 @@ public class Flight {
         this.price = price;
         parseAndSetWeekDays(departureDay);
     }
-    public Flight(){
-        //doNothing
-    }
+    //Empty Flight
+    public Flight(){}
 
+    /**
+     * Recieves and parses departureDay
+     * @param departureDay
+     */
     public void parseAndSetWeekDays(String departureDay){
         weekDays = new HashMap<>();
         String [] aux = departureDay.split("-");
@@ -86,6 +90,7 @@ public class Flight {
 
         return true;
     }
+
 
     //getters and setters
     public String getAirline() {
@@ -155,6 +160,21 @@ public class Flight {
         char[] hours = duration.substring(0, 2).toCharArray();
         char[] minutes = duration.substring(3).toCharArray();
         return ((hours[0] - '0')* 60 + (hours[1] - '0') * 6 + (minutes[0] - '0')) * 10 + (minutes[1] - '0');
+    }
+
+    public static String durationToString(double duration){
+        double aux = duration;
+        char[] result = new char[6];
+        result[0] = (char)('0' + (int)aux/600);
+        aux -= (int)aux/600 * 600;
+        result[1] = (char)('0' +(int)aux/60);
+        aux -= (int)aux/60 * 60;
+        result[2] = 'h';
+        result[3] = (char)('0' +(int)aux/10);
+        aux -= (int)aux/10 * 10;
+        result[4] = (char)('0' +(int)aux);
+        result[5] = 'm';
+        return new String(result);
     }
 
     public double getDepartureInDouble() {

@@ -3,7 +3,7 @@ import java.util.*;
 public class Airport {
     private String name;
     private double longitude, latitude;
-    private List<Flight> neighbors;
+    private List<Flight> neighbors = new ArrayList<>();
     private boolean visited;
     private int index = -1;
     private int lowLink = -1;
@@ -19,7 +19,6 @@ public class Airport {
         this.name = name;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.neighbors = new ArrayList<>();
         visited = false;
     }
 
@@ -40,6 +39,9 @@ public class Airport {
         return Objects.hashCode(name);
     }
 
+    /**
+     * Wrapper Class of Airport used to run Dijkstra's algorithm
+     */
     public class PQAirport implements Comparable<PQAirport> {
         Airport a;
         Integer dptDay;
@@ -72,15 +74,26 @@ public class Airport {
         }
     }
 
+    /**
+     * Dijkstra's Algorithm
+     * @param map
+     * @param from
+     * @param to
+     * @param fmt
+     * @param departureDays
+     * @return
+     */
     // Los pesos deben ser positivos
     public LinkedList<Flight> minDistance(FlightAssistant map, Airport from, Airport to, String fmt, String departureDays){
         Airport f = from;
         Airport t = to;
-        if( f == null || t == null)
+        if( f == null || t == null || !departureDays.matches("(Lu|Ma|Mi|Ju|Vi|Sa|Do|-)+"))
             return null;
+        //Divide las fechas dadas
         String [] s = departureDays.split("-");
         LinkedList<Flight> bestRoute = null;
         double bestCost = 0;
+        //Hacemos un dijkstra por cada fecha
         for (String posDay: s) {
             boolean firstCycle = true;
             PriorityQueue<PQAirport> pq = new PriorityQueue();
@@ -145,7 +158,6 @@ public class Airport {
             aux -= 1440;
         return aux;
     }
-
     public Integer getBestDay(HashMap<String, Integer> hm, double dpt, Integer d, double arrival) {
         Integer best = 0;
         boolean firstCycle = true;
