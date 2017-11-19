@@ -171,13 +171,13 @@ public class FlightAssistant {
         this.outputType = outputType;
     }
 
-    public List<Flight> worldTour(Airport startAirport, String condition){
+    public MyRoutePackage worldTour(Airport startAirport, String condition){
         clearAirportVisited();
         if(!isStronglyConnected())  return null;
         if(condition.equals("tt"))  return null;
         List<Airport>   notVisitedAirports = new LinkedList<>(airportList);
         notVisitedAirports.remove(startAirport);
-        List<Flight>    worldTourList = new LinkedList<>();
+        LinkedList<MyFlightPackage>    worldTourList = new LinkedList<>();
         Airport currentAirport = startAirport;
         Flight bestFlight;
         List<Flight>    currentDijkstra;
@@ -203,20 +203,26 @@ public class FlightAssistant {
                 for(Flight f: bestDijkstra){
                     currentAirport = f.getTo();
                     notVisitedAirports.remove(currentAirport);
-                    worldTourList.add(f);
+                    Integer weekDay = getFirstWeekDay(f);
+                    worldTourList.add(new MyFlightPackage(weekDay,f));
                 }
-                currentAirport = worldTourList.get(worldTourList.size() - 1).getTo();
+                currentAirport = worldTourList.get(worldTourList.size() - 1).flight.getTo();
             }else{
                currentAirport = bestFlight.getTo();
-               worldTourList.add(bestFlight);
+                Integer weekDay = getFirstWeekDay(bestFlight);
+                worldTourList.add(new MyFlightPackage(weekDay,bestFlight));
                notVisitedAirports.remove(currentAirport);
             }
 
         }
         currentDijkstra = new ArrayList<>();
         dijkstra(currentAirport,startAirport,currentDijkstra,condition);
-        worldTourList.addAll(currentDijkstra);
-        return worldTourList;
+        List<MyFlightPackage> finalStretch = new LinkedList<>();
+        for(Flight f: currentDijkstra)
+            finalStretch.add(new MyFlightPackage(getFirstWeekDay(f),f));
+
+        worldTourList.addAll(finalStretch);
+        return new MyRoutePackage(getPrice(worldTourList), getTime(worldTourList), worldTourList);
     }
 
     private class PQA implements Comparable<PQA>{
@@ -262,6 +268,31 @@ public class FlightAssistant {
         return cost;
     }
 
+    private double getPrice(List<MyFlightPackage> route){
+        double price = 0;
+        for(MyFlightPackage m: route)
+            price += m.flight.getPrice();
+        return price;
+    }
+
+    private double getTime(List<MyFlightPackage> route){
+        double time = 0;
+        for(MyFlightPackage m: route)
+            time += m.flight.getDurationInDouble();
+        return time;
+    }
+
+
+
+    private Integer getFirstWeekDay(Flight f){
+        Integer weekDay = 0;
+        for(String s: f.getWeekDays().keySet()) {
+            weekDay = f.getWeekDays().get(s);
+            return weekDay;
+        }
+        return weekDay;
+    }
+
     //FUNCION AUXILIAR DEL WORLDTOUR
     private Flight  selectMinFlightByCondition(List<Flight> flightList,String condition,List<Airport> notVisitedAirports){
         Flight minCostFlight = null;
@@ -273,6 +304,28 @@ public class FlightAssistant {
             }
         }
         return minCostFlight;
+    }
+
+    public class MyFlightPackage {
+        Integer day;
+        Flight flight;
+
+        public MyFlightPackage(Integer day, Flight flight) {
+            this.day = day;
+            this.flight = flight;
+        }
+    }
+
+    public class MyRoutePackage {
+        double best;
+        double totalTime;
+        LinkedList<MyFlightPackage> route;
+
+        public MyRoutePackage(double best, double totalTime, LinkedList<MyFlightPackage> route) {
+            this.best = best;
+            this.totalTime = totalTime;
+            this.route = route;
+        }
     }
 
     private void clearAirportVisited(){
@@ -303,9 +356,8 @@ public class FlightAssistant {
         fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("VOL"), fa.getAirportMap().get("MAD"),"12:00","12h00m",80));
         fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("VOL"), fa.getAirportMap().get("LIM"),"12:00","12h00m",15));
         fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("LIM"), fa.getAirportMap().get("BUE"),"12:00","12h00m",33));
-        List<Flight> listita = fa.worldTour(fa.getAirportMap().get("BUE"),"pr");
-        for(Flight f:listita){
-            System.out.println(f.getTo().getName());
-        }
+        List<MyFlightPackage> listita = fa.worldTour(fa.getAirportMap().get("BUE"),"pr").route;
+        for(MyFlightPackage m:listita)
+            System.out.println(m.flight.getTo().getName());
     }
 }
