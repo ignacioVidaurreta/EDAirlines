@@ -46,31 +46,44 @@ public class Airport {
         Airport a;
         Integer dptDay;
         double d;
-        LinkedList<Flight> route;
+        double totalTime;
+        LinkedList<MyFlightPackage> route;
 
-        public PQAirport(Airport a, double d, LinkedList<Flight> route, Flight f) {
-            this.a = a;
-            this.d = d;
-            this.route = new LinkedList<>();
-            if (route != null)
-                for(Flight aux : route)
-                    this.route.add(aux);
-            this.route.add(f);
-        }
-
-        public PQAirport(Airport a, double d, Integer dptDay, LinkedList<Flight> route, Flight f) {
+        public PQAirport(Airport a, double d, Integer dptDay, LinkedList<MyFlightPackage> route, MyFlightPackage f, double totalTime) {
             this.a = a;
             this.d = d;
             this.dptDay = dptDay;
             this.route = new LinkedList<>();
-            if (route != null)
-                for(Flight aux : route)
-                    this.route.add(aux);
+            for(MyFlightPackage aux : route)
+                this.route.add(aux);
             this.route.add(f);
+            this.totalTime = totalTime;
         }
 
         public int compareTo(PQAirport other) {
             return Double.valueOf(d).compareTo(other.d);
+        }
+    }
+
+    public class MyFlightPackage {
+        Integer day;
+        Flight flight;
+
+        public MyFlightPackage(Integer day, Flight flight) {
+            this.day = day;
+            this.flight = flight;
+        }
+    }
+
+    public class MyRoutePackage {
+        double best;
+        double totalTime;
+        LinkedList<MyFlightPackage> route;
+
+        public MyRoutePackage(double best, double totalTime, LinkedList<MyFlightPackage> route) {
+            this.best = best;
+            this.totalTime = totalTime;
+            this.route = route;
         }
     }
 
@@ -84,73 +97,107 @@ public class Airport {
      * @return
      */
     // Los pesos deben ser positivos
-    public LinkedList<Flight> minDistance(FlightAssistant map, Airport from, Airport to, String fmt, String departureDays){
+    public MyRoutePackage minDistance(FlightAssistant map, Airport from, Airport to, String fmt, String departureDays) {
+        for (Airport airport : map.getAirportList())
+            airport.setVisited(false);
+
         Airport f = from;
         Airport t = to;
-        if( f == null || t == null || !departureDays.matches("(Lu|Ma|Mi|Ju|Vi|Sa|Do|-)+"))
+        if (f == null || t == null || !departureDays.matches("(Lu|Ma|Mi|Ju|Vi|Sa|Do|-)+"))
             return null;
         //Divide las fechas dadas
-        String [] s = departureDays.split("-");
-        LinkedList<Flight> bestRoute = null;
-        double bestCost = 0;
+        String[] s = departureDays.split("-");
+        LinkedList<MyFlightPackage> bestRoute = null;
+        double arrival;
+        Integer nextDptDay, sumOneDay;
+        double bestCost, bestTotalTime, auxData;
+        bestCost = auxData = bestTotalTime = 0;
+        MyFlightPackage mfp;
         //Hacemos un dijkstra por cada fecha
-        for (String posDay: s) {
+        for (String posDay : s) {
             boolean firstCycle = true;
             PriorityQueue<PQAirport> pq = new PriorityQueue();
-            pq.offer(new PQAirport(f, 0, null, null, null));
-            while(!pq.isEmpty()){
+            pq.offer(new PQAirport(f, 0, null, null, null, 0));
+            while (!pq.isEmpty()) {
                 PQAirport aux = pq.poll();
-                if(aux.a == t) {
-                    if(bestCost == 0 || aux.d <= bestCost) {
+                if (aux.a == t) {
+                    if (bestCost == 0 || aux.d <= bestCost) {
                         bestRoute = aux.route;
                         bestCost = aux.d;
+                        bestTotalTime = aux.totalTime;
                     }
                 }
-                if(!aux.a.visited) {
+                if (!aux.a.visited) {
                     aux.a.visited = true;
                     for (Flight flght : aux.a.neighbors) {
-                        if(firstCycle && flght.getWeekDays().containsKey(posDay)){
-                            firstCycle = false;
-                            if (fmt.equals("pr")) {
-                                pq.offer(new PQAirport(flght.getTo(), aux.d + flght.getPrice(), null, flght));
-                            } else if (fmt.equals("ft")) {
-                                pq.offer(new PQAirport(flght.getTo(), aux.d + flght.getDurationInDouble(), null, flght));
-                            } else {
-                                double arrival = getArrival(aux.route.getLast());
-                                Integer nextDptDay = getBestDay(flght.getWeekDays(), flght.getDepartureInDouble(), aux.dptDay, arrival);
-                                if (nextDptDay > 0) {
-                                    double totalDuration = getTotalTime(arrival, aux.dptDay, flght.getDepartureInDouble(), nextDptDay);
-                                    pq.offer(new PQAirport(flght.getTo(), aux.d + totalDuration, nextDptDay, aux.route, flght));
+                        if (firstCycle) {
+                            if (flght.getWeekDays().containsKey(posDay)) {
+                                if (fmt.equals("pr")) {
+                                    auxData = flght.getPrice();
+                                } else {
+                                    auxData = flght.getDurationInDouble();
                                 }
+                                Integer day = getDayInInteger(posDay);
+                                mfp= new MyFlightPackage(day, flght);
+                                pq.offer(new PQAirport(flght.getTo(), auxData, flght.getWeekDays().get(posDay), aux.route, mfp, flght.getDurationInDouble()));
                             }
                         } else {
                             if (!flght.getTo().visited) {
+                                arrival = getArrival(aux.route.getLast().flight);
+                                sumOneDay = checkTime(aux.route.getLast().flight);
+                                nextDptDay = getBestDay(flght.getWeekDays(), flght.getDepartureInDouble(), aux.dptDay + sumOneDay, arrival);
+                                double totalDuration = getTotalTime(arrival, aux.dptDay, flght.getDepartureInDouble(), nextDptDay, sumOneDay);
                                 if (fmt.equals("pr")) {
-                                    pq.offer(new PQAirport(flght.getTo(), aux.d + flght.getPrice(), aux.route, flght));
+                                    auxData = aux.d + flght.getPrice();
                                 } else if (fmt.equals("ft")) {
-                                    pq.offer(new PQAirport(flght.getTo(), aux.d + flght.getDurationInDouble(), aux.route, flght));
+                                    auxData = aux.d + flght.getDurationInDouble();
                                 } else {
-                                    double arrival = getArrival(aux.route.getLast());
-                                    Integer nextDptDay = getBestDay(flght.getWeekDays(), flght.getDepartureInDouble(), aux.dptDay, arrival);
-                                    if (nextDptDay > 0) {
-                                        double totalDuration = getTotalTime(arrival, aux.dptDay, flght.getDepartureInDouble(), nextDptDay);
-                                        pq.offer(new PQAirport(flght.getTo(), aux.d + totalDuration, nextDptDay, aux.route, flght));
-                                    }
+                                    auxData = totalDuration + aux.d;
                                 }
+                                mfp = new MyFlightPackage(nextDptDay, flght);
+                                pq.offer(new PQAirport(flght.getTo(), auxData, nextDptDay, aux.route, mfp, aux.totalTime + totalDuration));
                             }
                         }
                     }
+                    firstCycle = false;
                 }
             }
-            for (Airport airport:map.getAirportList())
+            for (Airport airport : map.getAirportList())
                 airport.setVisited(false);
         }
-        if(bestRoute != null) {
-            return bestRoute;
+        if (bestRoute != null) {
+            MyRoutePackage route = new MyRoutePackage(bestCost, bestTotalTime, bestRoute);
+            return route;
         }
         return null;
     }
 
+
+    public Integer checkTime(Flight f) {
+        if(f.getDepartureInDouble() + f.getDurationInDouble() >= 1440)
+            return 1;
+        return 0;
+    }
+
+    public Integer getDayInInteger(String d) {
+        switch (d) {
+            case "Lu":
+                return 1;
+            case "Ma":
+                return 2;
+            case "Mi":
+                return 3;
+            case "Ju":
+                return 4;
+            case "Vi":
+                return 5;
+            case "Sa":
+                return 6;
+            case "Do":
+                return 7;
+        }
+        return 0;
+    }
 
     public double getArrival(Flight f) {
         double aux = f.getDepartureInDouble() + f.getDurationInDouble();
@@ -158,47 +205,37 @@ public class Airport {
             aux -= 1440;
         return aux;
     }
-    public Integer getBestDay(HashMap<String, Integer> hm, double dpt, Integer d, double arrival) {
-        Integer best = 0;
+
+    public Integer getBestDay(HashMap<String, Integer> hm, double dpt, Integer arrivalDay, double arrival) {
+        Integer best, ret;
+        best = ret = 0;
         boolean firstCycle = true;
+        Integer aux;
         for(Integer availableDay: hm.values()) {
-            Integer aux = availableDay - d;
+            aux = availableDay - arrivalDay;
             if(aux <= 0){
-                if(aux == 0 && dpt > arrival)
+                if(aux == 0 && dpt >= arrival)
                     return availableDay;
                 aux += 7;
             }
-            if(firstCycle) {
-                best = aux;
-                firstCycle = false;
-            } else {
+            if(!firstCycle) {
                 if(aux > best)
-                    return best;
-                best = aux;
+                    return ret;
             }
+            best = aux;
+            ret = availableDay;
+            firstCycle = false;
         }
-        return best;
+        return ret;
     }
 
-    public double getTotalTime(double arrivalTime, Integer day, double departureTime, Integer departureDay) {
-        int addDay = 0;
-        double arrivalAux = arrivalTime;
-        while(arrivalAux >= 1440) {
-            addDay += 1;
-            arrivalAux -= 1440;
-        }
-        int changesWeek = departureDay < day + addDay ? 1 : 0;
-        double amountOfdays = departureDay.doubleValue() - day.doubleValue() + 7 * changesWeek;
-        double fulltime = (departureTime + amountOfdays * 1440) - arrivalAux;
+    public double getTotalTime(double arrivalTime, Integer day, double departureTime, Integer departureDay, Integer shouldAddDay) {
+        int changesWeek = departureDay < day + shouldAddDay ? 1 : 0;
+        double amountOfdays = departureDay.doubleValue() - (day.doubleValue() + shouldAddDay.doubleValue()) + 7 * changesWeek;
+        double fulltime = (departureTime + amountOfdays * 1440) - arrivalTime;
         if (fulltime < 0)
             return fulltime + 7 * 1440;
         return fulltime;
-    }
-
-    public void printRoute(LinkedList<Flight> l) {
-        for (Flight f: l) {
-            System.out.println("Origin: " + f.getFrom().getName() + ", To: " + f.getTo().getName() + ", Airline: " + f.getAirline());
-        }
     }
 
     public boolean isVisited() {
