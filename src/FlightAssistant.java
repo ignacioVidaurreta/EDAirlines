@@ -277,12 +277,33 @@ public class FlightAssistant {
 
     private double getTime(List<MyFlightPackage> route){
         double time = 0;
-        for(MyFlightPackage m: route)
-            time += m.flight.getDurationInDouble();
+        Flight first = route.get(0).flight;
+        Integer firstDay = route.get(0).day;
+        time += first.getDurationInDouble();
+        double lastArrivalTime = (first.getDepartureInDouble() + first.getDurationInDouble())%(24*60*60);
+        for(int i = 1; i < route.size(); i++){
+            time += getDayTime(lastArrivalTime, route.get(i).day, firstDay, first) + first.getDurationInDouble();
+            first = route.get(i).flight;
+            firstDay = firstDay + (lastArrivalTime + route.get(i).flight.getDurationInDouble()) > (24*60*60) ?
+                    ((firstDay + 1) % 7) + 1 : firstDay;
+            lastArrivalTime = (lastArrivalTime + route.get(i).flight.getDurationInDouble())%(24*60*60);
+        }
         return time;
     }
 
-
+    private double getDayTime(double lastArrivalTime, Integer departureDay, Integer startDay, Flight f){
+        double time = 0;
+        if(startDay == departureDay && lastArrivalTime < f.getDepartureInDouble()){
+            return f.getDepartureInDouble() - lastArrivalTime;
+        }
+        while(startDay != departureDay -1 && !(startDay == 7 && departureDay == 1)){
+            time += (24*60*60);
+            startDay++;
+            if(startDay == 8) startDay = 1;
+        }
+        time += 24*60*60 - lastArrivalTime + f.getDepartureInDouble();
+        return time;
+    }
 
     private Integer getFirstWeekDay(Flight f){
         Integer weekDay = 0;
@@ -356,8 +377,12 @@ public class FlightAssistant {
         fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("VOL"), fa.getAirportMap().get("MAD"),"12:00","12h00m",80));
         fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("VOL"), fa.getAirportMap().get("LIM"),"12:00","12h00m",15));
         fa.insertFlight(new Flight("abc",1,"Lu",fa.getAirportMap().get("LIM"), fa.getAirportMap().get("BUE"),"12:00","12h00m",33));
-        List<MyFlightPackage> listita = fa.worldTour(fa.getAirportMap().get("BUE"),"pr").route;
-        for(MyFlightPackage m:listita)
+
+        MyRoutePackage listita = fa.worldTour(fa.getAirportMap().get("BUE"),"pr");
+        System.out.println(listita.totalTime);
+        System.out.println(listita.best);
+        for(MyFlightPackage m: listita.route) {
             System.out.println(m.flight.getTo().getName());
+        }
     }
 }
