@@ -54,36 +54,15 @@ public class Airport {
             this.d = d;
             this.dptDay = dptDay;
             this.route = new LinkedList<>();
-            for(MyFlightPackage aux : route)
-                this.route.add(aux);
+            if (route != null)
+                for(MyFlightPackage aux : route)
+                    this.route.add(aux);
             this.route.add(f);
             this.totalTime = totalTime;
         }
 
         public int compareTo(PQAirport other) {
             return Double.valueOf(d).compareTo(other.d);
-        }
-    }
-
-    public class MyFlightPackage {
-        Integer day;
-        Flight flight;
-
-        public MyFlightPackage(Integer day, Flight flight) {
-            this.day = day;
-            this.flight = flight;
-        }
-    }
-
-    public class MyRoutePackage {
-        double best;
-        double totalTime;
-        LinkedList<MyFlightPackage> route;
-
-        public MyRoutePackage(double best, double totalTime, LinkedList<MyFlightPackage> route) {
-            this.best = best;
-            this.totalTime = totalTime;
-            this.route = route;
         }
     }
 
@@ -179,7 +158,7 @@ public class Airport {
         return 0;
     }
 
-    public Integer getDayInInteger(String d) {
+    public static Integer getDayInInteger(String d) {
         switch (d) {
             case "Lu":
                 return 1;
@@ -197,6 +176,26 @@ public class Airport {
                 return 7;
         }
         return 0;
+    }
+
+    public static String getDayFromIngeter(int i){
+        switch (i) {
+            case 1:
+                return "Lu";
+            case 2:
+                return "Ma";
+            case 3:
+                return "Mi";
+            case 4:
+                return "Ju";
+            case 5:
+                return "Vi";
+            case 6:
+                return "Sa";
+            case 7:
+                return "Do";
+        }
+        return null;
     }
 
     public double getArrival(Flight f) {

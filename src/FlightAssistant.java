@@ -306,28 +306,6 @@ public class FlightAssistant {
         return minCostFlight;
     }
 
-    public class MyFlightPackage {
-        Integer day;
-        Flight flight;
-
-        public MyFlightPackage(Integer day, Flight flight) {
-            this.day = day;
-            this.flight = flight;
-        }
-    }
-
-    public class MyRoutePackage {
-        double best;
-        double totalTime;
-        LinkedList<MyFlightPackage> route;
-
-        public MyRoutePackage(double best, double totalTime, LinkedList<MyFlightPackage> route) {
-            this.best = best;
-            this.totalTime = totalTime;
-            this.route = route;
-        }
-    }
-
     private void clearAirportVisited(){
         for(Airport a:airportList)  a.setVisited(false);
     }

@@ -9,15 +9,15 @@ public class KMLCreator {
     private static final String KML_OPENER = "<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n <Folder>\n";
     private static final String KML_CLOSER = "</Folder> \n</kml>\n";
 
-    public static String airportsToKML (List<Flight> route) {
+    public static String airportsToKML (List<MyFlightPackage> route) {
         StringBuffer str = new StringBuffer();
-        Flight lastFlight = route.get(route.size()-1); //Obtiene el último viaje
+        MyFlightPackage lastFlight = route.get(route.size()-1); //Obtiene el último viaje
         str.append(HEADER);
         str.append(KML_OPENER);
 
-        for (Flight flight : route)
-            attachPlacemark(str, flight.getFrom(), buildDescription(flight));
-        attachPlacemark(str,lastFlight.getTo(), "Destination");
+        for (MyFlightPackage flightPackage : route)
+            attachPlacemark(str, flightPackage.flight.getFrom(), buildDescription(flightPackage.flight));
+        attachPlacemark(str,lastFlight.flight.getTo(), "Destination");
 
         str.append(KML_CLOSER);
 

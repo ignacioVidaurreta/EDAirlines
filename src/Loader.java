@@ -80,30 +80,30 @@ public class Loader {
         return flight;
     }
 
-    public static void saveRouteToFile(LinkedList<Flight> route, String outputType, String outputFormat){
+    public static void saveRouteToFile(MyRoutePackage route, String outputType, String outputFormat){
         FileWriter fileWriter;
         try{
             fileWriter = new FileWriter(new File(outputType));
             if (outputFormat.equals("text")){
                 float totalPrice = 0;
                 double totalFlightTime = 0;
-                for (Flight flight:route){
-                    if (flight == null){
+                for (MyFlightPackage flightPackage:route.route){
+                    if (flightPackage == null){
                         continue;
                     }
-                    totalPrice += flight.getPrice();
-                    totalFlightTime += flight.getDurationInDouble();
-                    fileWriter.write(flight.getFrom().getName() + "#");
-                    fileWriter.write(flight.getAirline() + "#");
-                    fileWriter.write(flight.getFlightNum() + "#");
-                    fileWriter.write(flight.getWeekDays()+ "#");
-                    fileWriter.write(flight.getTo().getName() + "\n");
+                    totalPrice += flightPackage.flight.getPrice();
+                    totalFlightTime += flightPackage.flight.getDurationInDouble();
+                    fileWriter.write(flightPackage.flight.getFrom().getName() + "#");
+                    fileWriter.write(flightPackage.flight.getAirline() + "#");
+                    fileWriter.write(flightPackage.flight.getFlightNum() + "#");
+                    fileWriter.write(Airport.getDayFromIngeter(flightPackage.day) + "#");
+                    fileWriter.write(flightPackage.flight.getTo().getName() + "\n");
                 }
                 fileWriter.write("Total price: " + totalPrice + '\n');
                 fileWriter.write("Flight Time: " + Flight.durationToString(totalFlightTime) + '\n');
 
             } else {
-                fileWriter.write(KMLCreator.airportsToKML(route));
+                fileWriter.write(KMLCreator.airportsToKML(route.route));
             }
             fileWriter.close();
         } catch (IOException e){
