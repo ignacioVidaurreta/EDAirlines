@@ -99,8 +99,9 @@ public class Loader {
                     fileWriter.write(Airport.getDayFromIngeter(flightPackage.day) + "#");
                     fileWriter.write(flightPackage.flight.getTo().getName() + "\n");
                 }
-                fileWriter.write("Total price: " + totalPrice + '\n');
-                fileWriter.write("Flight Time: " + Flight.durationToString(totalFlightTime) + '\n');
+                fileWriter.write("Precio#" + totalPrice + '\n');
+                fileWriter.write("TiempoVuelo#" + Flight.durationToString(totalFlightTime) + '\n');
+                fileWriter.write("TiempoTotal#" + Flight.durationToString(route.totalTime) + '\n');
 
             } else {
                 fileWriter.write(KMLCreator.airportsToKML(route.route));

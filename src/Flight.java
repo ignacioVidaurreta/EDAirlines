@@ -164,16 +164,33 @@ public class Flight {
 
     public static String durationToString(double duration){
         double aux = duration;
-        char[] result = new char[6];
-        result[0] = (char)('0' + (int)aux/600);
-        aux -= (int)aux/600 * 600;
-        result[1] = (char)('0' +(int)aux/60);
-        aux -= (int)aux/60 * 60;
-        result[2] = 'h';
-        result[3] = (char)('0' +(int)aux/10);
-        aux -= (int)aux/10 * 10;
-        result[4] = (char)('0' +(int)aux);
-        result[5] = 'm';
+        char[] result;
+        if ((int)aux/600 > 10){
+            result = new char[7];
+            result[0] = (char)('0' + (int)aux/6000);
+            aux -= (int)aux/6000 * 6000;
+            result[1] = (char)('0' + (int)aux/600);
+            aux -= (int)aux/600 * 600;
+            result[2] = (char)('0' +(int)aux/60);
+            aux -= (int)aux/60 * 60;
+            result[3] = 'h';
+            result[4] = (char)('0' +(int)aux/10);
+            aux -= (int)aux/10 * 10;
+            result[5] = (char)('0' +(int)aux);
+            result[6] = 'm';
+
+        } else {
+            result = new char[6];
+            result[0] = (char)('0' + (int)aux/600);
+            aux -= (int)aux/600 * 600;
+            result[1] = (char)('0' +(int)aux/60);
+            aux -= (int)aux/60 * 60;
+            result[2] = 'h';
+            result[3] = (char)('0' +(int)aux/10);
+            aux -= (int)aux/10 * 10;
+            result[4] = (char)('0' +(int)aux);
+            result[5] = 'm';
+        }
         return new String(result);
     }
 

@@ -219,7 +219,13 @@ public class EDAirlines {
             }
         }
         else if (input.contains("outputFormat")){
-            String[] args = input.split("outputFormat ")[1].split(" ");
+            String[] args = null;
+            try{
+                args = input.split("outputFormat ")[1].split(" ");
+            } catch (ArrayIndexOutOfBoundsException e){
+                System.out.println("Not enough arguments.");
+                return;
+            }
             if (args.length < 2){
                 System.out.println("Not enough arguments.");
                 return;
