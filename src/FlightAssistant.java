@@ -277,31 +277,33 @@ public class FlightAssistant {
 
     private double getTime(List<MyFlightPackage> route){
         double time = 0;
+        double timeInADay = 24*60;
         Flight first = route.get(0).flight;
         Integer firstDay = route.get(0).day;
         time += first.getDurationInDouble();
-        double lastArrivalTime = (first.getDepartureInDouble() + first.getDurationInDouble())%(24*60*60);
+        double lastArrivalTime = (first.getDepartureInDouble() + first.getDurationInDouble())%(timeInADay);
         for(int i = 1; i < route.size(); i++){
             time += getDayTime(lastArrivalTime, route.get(i).day, firstDay, first) + first.getDurationInDouble();
             first = route.get(i).flight;
-            firstDay = firstDay + (lastArrivalTime + route.get(i).flight.getDurationInDouble()) > (24*60*60) ?
+            firstDay = firstDay + (lastArrivalTime + route.get(i).flight.getDurationInDouble()) > (timeInADay) ?
                     ((firstDay + 1) % 7) + 1 : firstDay;
-            lastArrivalTime = (lastArrivalTime + route.get(i).flight.getDurationInDouble())%(24*60*60);
+            lastArrivalTime = (lastArrivalTime + route.get(i).flight.getDurationInDouble())%(timeInADay);
         }
         return time;
     }
 
     private double getDayTime(double lastArrivalTime, Integer departureDay, Integer startDay, Flight f){
         double time = 0;
+        double timeInADay = 24*60;
         if(startDay == departureDay && lastArrivalTime < f.getDepartureInDouble()){
             return f.getDepartureInDouble() - lastArrivalTime;
         }
         while(startDay != departureDay -1 && !(startDay == 7 && departureDay == 1)){
-            time += (24*60*60);
+            time += timeInADay;
             startDay++;
             if(startDay == 8) startDay = 1;
         }
-        time += 24*60*60 - lastArrivalTime + f.getDepartureInDouble();
+        time += timeInADay - lastArrivalTime + f.getDepartureInDouble();
         return time;
     }
 
