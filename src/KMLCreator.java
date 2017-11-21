@@ -11,16 +11,18 @@ public class KMLCreator {
 
     public static String airportsToKML (List<MyFlightPackage> route) {
         StringBuffer str = new StringBuffer();
-        MyFlightPackage lastFlight = route.get(route.size()-1); //Obtiene el último viaje
+        MyFlightPackage lastFlight = route.get(route.size()-1); //Obtiene el último viaje;;
         str.append(HEADER);
         str.append(KML_OPENER);
-
-        for (MyFlightPackage flightPackage : route)
+        for (MyFlightPackage flightPackage : route) {
+            if (flightPackage== null)continue;
             attachPlacemark(str, flightPackage.flight.getFrom(), buildDescription(flightPackage.flight));
+        }
         attachPlacemark(str,lastFlight.flight.getTo(), "Destination");
 
         str.append(KML_CLOSER);
 
+        System.out.println(str);
         return new String(str);
     }
 

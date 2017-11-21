@@ -137,7 +137,7 @@ public class EDAirlines {
                 System.out.println("Not enough arguments.");
                 return;
             }
-            MyRoutePackage route = null;
+            MyRoutePackage route;
             try{
                  route = map.getAirportMap().get(args[0]).minDistance(map, map.getAirportMap().get(args[0]),
                                                                             map.getAirportMap().get(args[1]),

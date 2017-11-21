@@ -8,8 +8,8 @@ import java.util.List;
  * Manages Airports and flights
  */
 public class FlightAssistant {
-    String outputFormat = "text";
-    String outputType = "stdout";
+    String outputFormat;
+    String outputType;
     private HashMap<String, Airport> airportMap;
     private List<Airport> airportList;
     /*
@@ -23,6 +23,8 @@ public class FlightAssistant {
         airportMap= new HashMap<>();
         airportList = new ArrayList<>();
         airlinesFlights = new HashMap<>();
+        outputFormat = "text";
+        outputType = "stdout";
     }
 
     public boolean addAirport(Airport air){
@@ -59,7 +61,6 @@ public class FlightAssistant {
 
 
         flight.getFrom().getNeighbors().add(flight);
-
         airlinesFlights.putIfAbsent(flight.getAirline(), new HashMap<>());
 
         airlinesFlights.get(flight.getAirline()).put(flight.getFlightNum(), flight);

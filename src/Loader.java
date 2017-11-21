@@ -105,6 +105,7 @@ public class Loader {
 
             } else {
                 fileWriter.write(KMLCreator.airportsToKML(route.route));
+
             }
             fileWriter.close();
         } catch (IOException e){
